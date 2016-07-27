@@ -1,0 +1,15 @@
+* TODO don't use taskkill in settings.ps1
+
+Use something more PS'ish possibly job-control stuff?
+
+* DONE Never tried uninsaller, make sure it works
+  CLOSED: [2016-07-29 Fri 09:43]
+* DONE Each time this runs IE complains about not being closed properly
+  CLOSED: [2016-07-28 Thu 20:34]
+
+Each time this runs IE complains about not being closed properly. Maybe
+leave cookie behind and don't run twice per account?
+
+* DONE Make sure this works with FBWF write protect on
+  CLOSED: [2016-07-29 Fri 02:05]
+
