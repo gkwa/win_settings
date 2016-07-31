@@ -1,3 +1,7 @@
+* TODO this isntaller should bail if write protect is on
+
+At the moment installer doesn't check
+
 * TODO don't use taskkill in settings.ps1
 
 Use something more PS'ish possibly job-control stuff?
