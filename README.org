@@ -1,3 +1,12 @@
+* TODO Re-evaluate whether each function should be run just once
+
+These two were just added, but there is no check yet as to whether
+theyve been run before. I think they should run just once, but we should
+also then have a -force option to run despite having already been run.
+
+tm/bestPerformance
+tm/set-processorscheduling
+
 * TODO this isntaller should bail if write protect is on
 
 At the moment installer doesn't check
