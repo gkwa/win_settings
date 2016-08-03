@@ -6,10 +6,30 @@ Param(
     [Parameter(Mandatory=$false)] [switch]$errorreportingdisable=$false,
     [Parameter(Mandatory=$false)] [switch]$priorityBackgroundServices=$true,
     [Parameter(Mandatory=$false)] [switch]$removeieshortcut=$false,
+    [Parameter(Mandatory=$false)] [switch]$bestPerformance=$false,
     [Parameter(Mandatory=$false)] [switch]$addtaylorsshortcuts=$false
 )
 
 . '.\include.ps1'
+
+
+<#
+https://goo.gl/EluKKE
+#>
+function bestPerformance()
+{
+	$path = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects'
+	try {
+		$s = (Get-ItemProperty -ErrorAction stop `
+		  -Name visualfxsetting -Path $path).visualfxsetting
+		if ($s -ne 2) {
+			Set-ItemProperty -Path $path -Name VisualFXSetting -Value 2
+		}
+	}
+	catch {
+		New-ItemProperty -Path $path -Name VisualFXSetting -Value 2 -PropertyType DWORD
+	}
+}
 
 <#
 https://goo.gl/AlWgg9
@@ -120,6 +140,7 @@ if($ws7e)
 	$enablequickeditmode = $true
 	$removeieshortcut = $true
 	$priorityBackgroundServices = $true
+	$bestPerformance = $true
 }
 
 function main()
@@ -142,6 +163,11 @@ function main()
 	if($priorityBackgroundServices)
 	{
 		set-processorscheduling -BackgroundServices
+	}
+
+	if($bestPerformance)
+	{
+		bestPerformance
 	}
 }
 
