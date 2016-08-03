@@ -76,6 +76,7 @@ Section section1 section_section1
 
 	nsExec::Exec '"$SYSDIR\schtasks.exe" /delete /f /tn StreamboxLogonSettings'
 	nsExec::Exec '"$SYSDIR\schtasks.exe" /create /xml StreamboxLogonSettings.xml /tn StreamboxLogonSettings'
+	nsExec::Exec '"$SYSDIR\schtasks.exe" /run /tn StreamboxLogonSettings'
 
 	SetOutPath "$INSTDIR"
 
