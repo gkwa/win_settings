@@ -4,13 +4,45 @@ Param(
     [Parameter(Mandatory=$false)] [switch]$proxydisable=$false,
     [Parameter(Mandatory=$false)] [switch]$enablequickeditmode=$false,
     [Parameter(Mandatory=$false)] [switch]$errorreportingdisable=$false,
+    [Parameter(Mandatory=$false)] [switch]$priorityBackgroundServices=$true,
     [Parameter(Mandatory=$false)] [switch]$removeieshortcut=$false,
     [Parameter(Mandatory=$false)] [switch]$addtaylorsshortcuts=$false
 )
 
 . '.\include.ps1'
 
+<#
+https://goo.gl/AlWgg9
 
+# this will prioritize background services
+.\set-processorscheduling.ps1 -BackgroundServices
+
+# this will prioritize programs
+.\set-processorscheduling.ps1 -Programs 
+#>
+
+function set-processorscheduling()
+{
+	param
+	(
+		[switch]$Programs,
+		[switch]$BackgroundServices
+	)
+	if($Programs)
+	{
+		Set-ItemProperty HKLM:\SYSTEM\CurrentControlSet\Control\PriorityControl `
+		  -Name Win32PrioritySeparation -Value 2
+	}
+	elseif($BackgroundServices)
+	{
+		Set-ItemProperty HKLM:\SYSTEM\CurrentControlSet\Control\PriorityControl `
+		  -Name Win32PrioritySeparation -Value 18
+	}
+	else
+	{
+		Write-Output "You must specify a flag!"
+	}
+}
 
 function enable_quick_edit_mode()
 {
@@ -87,6 +119,7 @@ if($ws7e)
 	$errorreportingdisable = $true
 	$enablequickeditmode = $true
 	$removeieshortcut = $true
+	$priorityBackgroundServices = $true
 }
 
 function main()
@@ -104,6 +137,11 @@ function main()
 	if($enablequickeditmode)
 	{
 		enable_quick_edit_mode
+	}
+
+	if($priorityBackgroundServices)
+	{
+		set-processorscheduling -BackgroundServices
 	}
 }
 
