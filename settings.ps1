@@ -68,6 +68,12 @@ function configure_cmd_console()
 {
 	# (Get-ItemProperty -Path HKCU:\Console -Name QuickEdit).QuickEdit
 	Set-ItemProperty -path HKCU:\Console -name QuickEdit -Type Dword -value 1
+
+    #ScreenBufferSize 120 w x 300 h
+	Set-ItemProperty -path HKCU:\Console -name ScreenBufferSize -Type Dword -value 0x12c0078
+
+    #WindowSize 110 w x 23 h
+	Set-ItemProperty -path HKCU:\Console -name WindowSize -Type Dword -value 0x190078
 }
 
 function error_reporting_disable()
