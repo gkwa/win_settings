@@ -2,7 +2,7 @@
 Param(
     [Parameter(Mandatory=$false)] [switch]$ws7e=$false,
     [Parameter(Mandatory=$false)] [switch]$proxydisable=$false,
-    [Parameter(Mandatory=$false)] [switch]$enablequickeditmode=$false,
+    [Parameter(Mandatory=$false)] [switch]$configure_cmd_console=$false,
     [Parameter(Mandatory=$false)] [switch]$errorreportingdisable=$false,
     [Parameter(Mandatory=$false)] [switch]$priorityBackgroundServices=$true,
     [Parameter(Mandatory=$false)] [switch]$removeieshortcut=$false,
@@ -64,10 +64,10 @@ function set-processorscheduling()
 	}
 }
 
-function enable_quick_edit_mode()
+function configure_cmd_console()
 {
 	# (Get-ItemProperty -Path HKCU:\Console -Name QuickEdit).QuickEdit
-	Set-ItemProperty -Path HKCU:\Console -Name QuickEdit -Type Dword -Value 1
+	Set-ItemProperty -path HKCU:\Console -name QuickEdit -Type Dword -value 1
 }
 
 function error_reporting_disable()
@@ -137,7 +137,7 @@ if($ws7e)
 {
 	$proxydisable = $true
 	$errorreportingdisable = $true
-	$enablequickeditmode = $true
+	$configure_cmd_console = $true
 	$removeieshortcut = $true
 	$priorityBackgroundServices = $true
 	$bestPerformance = $true
@@ -155,10 +155,10 @@ function main()
 		error_reporting_disable
 	}
 
-	if($enablequickeditmode)
+	if($configure_cmd_console)
 	{
-		enable_quick_edit_mode
-	}
+		configure_cmd_console
+ 	}
 
 	if($priorityBackgroundServices)
 	{
