@@ -12,12 +12,22 @@ Param(
 
 . '.\include.ps1'
 
+function mark_as_ran($keyname)
+{
+	New-Item -Type Directory -Force -Path HKCU:\Software\Streambox\win_settings
+	New-ItemProperty -Path HKCU:\Software\Streambox\win_settings -Name $keyname -Value 1 `
+	  -PropertyType DWORD -Force | Out-Null
+}
 
 <#
 https://goo.gl/EluKKE
 #>
 function bestPerformance()
 {
+	if((Test-RegistryKeyValue 'HKCU:\Software\Streambox\win_settings' 'bestPerformance')){
+		return 
+	}
+
 	$path = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects'
 	try {
 		$s = (Get-ItemProperty -ErrorAction stop `
@@ -29,6 +39,8 @@ function bestPerformance()
 	catch {
 		New-ItemProperty -Path $path -Name VisualFXSetting -Value 2 -PropertyType DWORD
 	}
+
+	mark_as_ran 'bestPerformance'
 }
 
 <#
