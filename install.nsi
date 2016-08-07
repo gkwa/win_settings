@@ -70,6 +70,7 @@ Section section1 section_section1
 	ExpandEnvStrings $0 %ALLUSERSPROFILE%
 	SetOutPath "$0\Streambox\win_settings"
 
+	File win_settings.vbs
 	File settings.ps1
 	File include.ps1
 	File StreamboxLogonSettings.xml
