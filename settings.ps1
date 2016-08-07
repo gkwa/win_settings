@@ -2,14 +2,46 @@
 Param(
     [Parameter(Mandatory=$false)] [switch]$ws7e=$false,
     [Parameter(Mandatory=$false)] [switch]$proxydisable=$false,
-    [Parameter(Mandatory=$false)] [switch]$enablequickeditmode=$false,
+    [Parameter(Mandatory=$false)] [switch]$configure_cmd_console=$false,
     [Parameter(Mandatory=$false)] [switch]$errorreportingdisable=$false,
     [Parameter(Mandatory=$false)] [switch]$priorityBackgroundServices=$true,
     [Parameter(Mandatory=$false)] [switch]$removeieshortcut=$false,
+    [Parameter(Mandatory=$false)] [switch]$bestPerformance=$false,
     [Parameter(Mandatory=$false)] [switch]$addtaylorsshortcuts=$false
 )
 
 . '.\include.ps1'
+
+function mark_as_ran($keyname)
+{
+	New-Item -Type Directory -Force -Path HKCU:\Software\Streambox\win_settings
+	New-ItemProperty -Path HKCU:\Software\Streambox\win_settings -Name $keyname -Value 1 `
+	  -PropertyType DWORD -Force | Out-Null
+}
+
+<#
+https://goo.gl/EluKKE
+#>
+function bestPerformance()
+{
+	if((Test-RegistryKeyValue 'HKCU:\Software\Streambox\win_settings' 'bestPerformance')){
+		return 
+	}
+
+	$path = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects'
+	try {
+		$s = (Get-ItemProperty -ErrorAction stop `
+		  -Name visualfxsetting -Path $path).visualfxsetting
+		if ($s -ne 2) {
+			Set-ItemProperty -Path $path -Name VisualFXSetting -Value 2
+		}
+	}
+	catch {
+		New-ItemProperty -Path $path -Name VisualFXSetting -Value 2 -PropertyType DWORD
+	}
+
+	mark_as_ran 'bestPerformance'
+}
 
 <#
 https://goo.gl/AlWgg9
@@ -44,10 +76,16 @@ function set-processorscheduling()
 	}
 }
 
-function enable_quick_edit_mode()
+function configure_cmd_console()
 {
 	# (Get-ItemProperty -Path HKCU:\Console -Name QuickEdit).QuickEdit
-	Set-ItemProperty -Path HKCU:\Console -Name QuickEdit -Type Dword -Value 1
+	Set-ItemProperty -path HKCU:\Console -name QuickEdit -Type Dword -value 1
+
+    #ScreenBufferSize 120 w x 300 h
+	Set-ItemProperty -path HKCU:\Console -name ScreenBufferSize -Type Dword -value 0x12c0078
+
+    #WindowSize 110 w x 23 h
+	Set-ItemProperty -path HKCU:\Console -name WindowSize -Type Dword -value 0x190078
 }
 
 function error_reporting_disable()
@@ -117,9 +155,10 @@ if($ws7e)
 {
 	$proxydisable = $true
 	$errorreportingdisable = $true
-	$enablequickeditmode = $true
+	$configure_cmd_console = $true
 	$removeieshortcut = $true
 	$priorityBackgroundServices = $true
+	$bestPerformance = $true
 }
 
 function main()
@@ -134,14 +173,19 @@ function main()
 		error_reporting_disable
 	}
 
-	if($enablequickeditmode)
+	if($configure_cmd_console)
 	{
-		enable_quick_edit_mode
-	}
+		configure_cmd_console
+ 	}
 
 	if($priorityBackgroundServices)
 	{
 		set-processorscheduling -BackgroundServices
+	}
+
+	if($bestPerformance)
+	{
+		bestPerformance
 	}
 }
 
