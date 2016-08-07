@@ -1,3 +1,11 @@
+* TODO pu is working, but clean it up
+
+I started don't-run-twice in =tm/bestPerformance= and then changed how I
+did it in tm/dontruntwice.
+
+tm/bestPerformance
+tm/dontruntwice
+
 * TODO Re-evaluate whether each function should be run just once
 
 These two were just added, but there is no check yet as to whether
