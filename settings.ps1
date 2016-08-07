@@ -47,7 +47,7 @@ function bestPerformance()
 		New-ItemProperty -Path $path -Name VisualFXSetting -Value 2 -PropertyType DWORD
 	}
 
-	mark_as_ran 'bestPerformance'
+	mark_as_ran bestPerformance
 }
 
 <#
@@ -87,7 +87,7 @@ function set-processorscheduling()
 		Write-Output "You must specify a flag!"
 	}
 
-	mark_as_ran "set-processorscheduling"
+	mark_as_ran set-processorscheduling
 }
 
 function configure_cmd_console()
@@ -106,7 +106,7 @@ function configure_cmd_console()
     #WindowSize 110 w x 23 h
 	Set-ItemProperty -path HKCU:\Console -name WindowSize -Type Dword -value 0x190078
 
-	mark_as_ran "configure_cmd_console"
+	mark_as_ran configure_cmd_console
 
 }
 
@@ -121,7 +121,7 @@ function error_reporting_disable()
 	set-itemproperty -path 'HKCU:\Software\Microsoft\Windows\Windows Error Reporting' `
 	  -Type DWord -name DontShowUI -value 1
 
-	mark_as_ran 'error_reporting_disable'
+	mark_as_ran error_reporting_disable
 
 }
 
@@ -176,7 +176,7 @@ function proxy_disable()
 
 	taskkill /f /im iexplore.exe
 
-	mark_as_ran 'disable_proxy_ran'
+	mark_as_ran disable_proxy_ran
 
 }
 
