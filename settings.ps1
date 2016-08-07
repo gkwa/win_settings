@@ -14,9 +14,16 @@ Param(
 
 function mark_as_ran($keyname)
 {
-	New-Item -Type Directory -Force -Path HKCU:\Software\Streambox\win_settings
-	New-ItemProperty -Path HKCU:\Software\Streambox\win_settings -Name $keyname -Value 1 `
-	  -PropertyType DWORD -Force | Out-Null
+	if(-not(test-path HKCU:\Software\Streambox)){
+		New-Item -Type Directory -Path HKCU:\Software\Streambox
+	}
+	if(-not(test-path HKCU:\Software\Streambox\win_settings)){
+		New-Item -Type Directory -Path HKCU:\Software\Streambox\win_settings
+	}
+	if(-not(test-path "HKCU:\Software\Streambox\win_settings\$keyName")){
+		New-ItemProperty -Path HKCU:\Software\Streambox\win_settings -Name $keyName -Value 1 -PropertyType DWORD -Force | Out-Null
+	}
+
 }
 
 <#
