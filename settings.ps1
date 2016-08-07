@@ -80,7 +80,7 @@ function set-processorscheduling()
 		Write-Output "You must specify a flag!"
 	}
 
-	mark_as_ran 'set-processorscheduling'
+	mark_as_ran "set-processorscheduling"
 }
 
 function configure_cmd_console()
@@ -99,7 +99,7 @@ function configure_cmd_console()
     #WindowSize 110 w x 23 h
 	Set-ItemProperty -path HKCU:\Console -name WindowSize -Type Dword -value 0x190078
 
-	mark_as_ran 'configure_cmd_console'
+	mark_as_ran "configure_cmd_console"
 
 }
 
@@ -121,7 +121,7 @@ function error_reporting_disable()
 function proxy_disable()
 {
 
-	# don't run twice for same user
+	# dont run twice for same user
 	if((Test-RegistryKeyValue 'HKCU:\Software\Streambox\win_settings' 'disable_proxy_ran')){
 		return 
 	}
