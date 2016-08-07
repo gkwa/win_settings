@@ -49,6 +49,7 @@ MAKENSIS_SW += /Dversion=$(version)
 
 $(installer): StreamboxLogonSettings.xml
 $(installer): include.ps1
+$(installer): win_settings.vbs
 $(installer): settings.ps1
 $(installer): install.nsi
 	$(QUIET_MAKENSIS)$(MAKENSIS) $(MAKENSIS_SW) $<
