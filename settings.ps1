@@ -60,6 +60,11 @@ function set-processorscheduling()
 		[switch]$Programs,
 		[switch]$BackgroundServices
 	)
+
+	if((Test-RegistryKeyValue 'HKCU:\Software\Streambox\win_settings' 'set-processorscheduling')){
+		return 
+	}
+
 	if($Programs)
 	{
 		Set-ItemProperty HKLM:\SYSTEM\CurrentControlSet\Control\PriorityControl `
@@ -74,10 +79,17 @@ function set-processorscheduling()
 	{
 		Write-Output "You must specify a flag!"
 	}
+
+	mark_as_ran 'set-processorscheduling'
 }
 
 function configure_cmd_console()
 {
+
+	if((Test-RegistryKeyValue 'HKCU:\Software\Streambox\win_settings' 'configure_cmd_console')){
+		return 
+	}
+
 	# (Get-ItemProperty -Path HKCU:\Console -Name QuickEdit).QuickEdit
 	Set-ItemProperty -path HKCU:\Console -name QuickEdit -Type Dword -value 1
 
@@ -86,26 +98,33 @@ function configure_cmd_console()
 
     #WindowSize 110 w x 23 h
 	Set-ItemProperty -path HKCU:\Console -name WindowSize -Type Dword -value 0x190078
+
+	mark_as_ran 'configure_cmd_console'
+
 }
 
 function error_reporting_disable()
 {
+
+	if((Test-RegistryKeyValue 'HKCU:\Software\Streambox\win_settings' 'error_reporting_disable')){
+		return 
+	}
+
 	# Disable error reporting for current user
 	set-itemproperty -path 'HKCU:\Software\Microsoft\Windows\Windows Error Reporting' `
 	  -Type DWord -name DontShowUI -value 1
+
+	mark_as_ran 'error_reporting_disable'
+
 }
 
 function proxy_disable()
 {
+
 	# don't run twice for same user
 	if((Test-RegistryKeyValue 'HKCU:\Software\Streambox\win_settings' 'disable_proxy_ran')){
 		return 
 	}
-
-	New-Item -Type Directory -Path HKCU:\Software\Streambox
-	New-Item -Type Directory -Path HKCU:\Software\Streambox\win_settings
-	New-ItemProperty -Path HKCU:\Software\Streambox\win_settings -Name disable_proxy_ran -Value 1 `
-	  -PropertyType DWORD -Force | Out-Null
 
 	function Disable-AutomaticallyDetectProxySettings
 	{
@@ -149,6 +168,9 @@ function proxy_disable()
 	Set-Itemproperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections" -Name ProxyEnable -Value 0
 
 	taskkill /f /im iexplore.exe
+
+	mark_as_ran 'disable_proxy_ran'
+
 }
 
 if($ws7e)
