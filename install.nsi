@@ -110,6 +110,8 @@ Section uninstall section_uninstall
 	rmdir /r "$PROGRAMFILES\Streambox\${name}"
 	rmdir "$PROGRAMFILES\Streambox"
 
+	DeleteRegKey HKCU 'Software\Streambox\win_settings'
+	DeleteRegKey /ifempty HKCU 'Software\Streambox'
 	DeleteRegKey HKLM 'Software\Streambox\${name}'
 	DeleteRegKey /ifempty HKLM 'Software\Streambox'
 
