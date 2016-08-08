@@ -12,16 +12,27 @@ Param(
 
 . '.\include.ps1'
 
-function mark_as_ran($keyname)
+function run_and_mark
 {
+	param ([parameter(Mandatory=$false)][string]$func, [string]$func_args)
+
+	# dont run twice for same user
+	if((Test-RegistryKeyValue 'HKCU:\Software\Streambox\win_settings' $func)){
+		return
+	}
+
+	Invoke-Expression "$func $func_args"
+
 	if(-not(test-path HKCU:\Software\Streambox)){
 		New-Item -Type Directory -Path HKCU:\Software\Streambox
 	}
 	if(-not(test-path HKCU:\Software\Streambox\win_settings)){
 		New-Item -Type Directory -Path HKCU:\Software\Streambox\win_settings
 	}
-	if(-not(test-path "HKCU:\Software\Streambox\win_settings\$keyName")){
-		New-ItemProperty -Path HKCU:\Software\Streambox\win_settings -Name $keyName -PropertyType DWORD -Force | Out-Null
+	$path = "HKCU:\Software\Streambox\win_settings\{0}" -f $func
+	if(-not(test-path $path)){
+		New-ItemProperty -Path HKCU:\Software\Streambox\win_settings `
+		  -Name $func -PropertyType DWORD -Force | Out-Null
 	}
 
 }
@@ -31,9 +42,6 @@ https://goo.gl/EluKKE
 #>
 function bestPerformance()
 {
-	if((Test-RegistryKeyValue 'HKCU:\Software\Streambox\win_settings' 'bestPerformance')){
-		return 
-	}
 
 	$path = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects'
 	try {
@@ -47,7 +55,6 @@ function bestPerformance()
 		New-ItemProperty -Path $path -Name VisualFXSetting -Value 2 -PropertyType DWORD
 	}
 
-	mark_as_ran bestPerformance
 }
 
 <#
@@ -68,10 +75,6 @@ function set-processorscheduling()
 		[switch]$BackgroundServices
 	)
 
-	if((Test-RegistryKeyValue 'HKCU:\Software\Streambox\win_settings' 'set-processorscheduling')){
-		return 
-	}
-
 	if($Programs)
 	{
 		Set-ItemProperty HKLM:\SYSTEM\CurrentControlSet\Control\PriorityControl `
@@ -87,15 +90,10 @@ function set-processorscheduling()
 		Write-Output "You must specify a flag!"
 	}
 
-	mark_as_ran set-processorscheduling
 }
 
 function configure_cmd_console()
 {
-
-	if((Test-RegistryKeyValue 'HKCU:\Software\Streambox\win_settings' 'configure_cmd_console')){
-		return 
-	}
 
 	# (Get-ItemProperty -Path HKCU:\Console -Name QuickEdit).QuickEdit
 	Set-ItemProperty -path HKCU:\Console -name QuickEdit -Type Dword -value 1
@@ -106,32 +104,19 @@ function configure_cmd_console()
     #WindowSize 110 w x 23 h
 	Set-ItemProperty -path HKCU:\Console -name WindowSize -Type Dword -value 0x190078
 
-	mark_as_ran configure_cmd_console
-
 }
 
 function error_reporting_disable()
 {
 
-	if((Test-RegistryKeyValue 'HKCU:\Software\Streambox\win_settings' 'error_reporting_disable')){
-		return 
-	}
-
 	# Disable error reporting for current user
 	set-itemproperty -path 'HKCU:\Software\Microsoft\Windows\Windows Error Reporting' `
 	  -Type DWord -name DontShowUI -value 1
-
-	mark_as_ran error_reporting_disable
 
 }
 
 function proxy_disable()
 {
-
-	# dont run twice for same user
-	if((Test-RegistryKeyValue 'HKCU:\Software\Streambox\win_settings' 'disable_proxy_ran')){
-		return 
-	}
 
 	function Disable-AutomaticallyDetectProxySettings
 	{
@@ -176,8 +161,6 @@ function proxy_disable()
 
 	taskkill /f /im iexplore.exe
 
-	mark_as_ran disable_proxy_ran
-
 }
 
 if($ws7e)
@@ -194,27 +177,27 @@ function main()
 {
 	if($proxydisable)
 	{
-		proxy_disable
+		run_and_mark proxy_disable
 	}
 
 	if($errorreportingdisable)
 	{
-		error_reporting_disable
+		run_and_mark error_reporting_disable
 	}
 
 	if($configure_cmd_console)
 	{
-		configure_cmd_console
- 	}
+		run_and_mark configure_cmd_console
+	}
 
 	if($priorityBackgroundServices)
 	{
-		set-processorscheduling -BackgroundServices
+		run_and_mark "set-processorscheduling -BackgroundServices"
 	}
 
 	if($bestPerformance)
 	{
-		bestPerformance
+		run_and_mark bestPerformance
 	}
 }
 
