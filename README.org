@@ -1,20 +1,3 @@
-* TODO pu is working, but clean it up
-
-I started don't-run-twice in =tm/bestPerformance= and then changed how I
-did it in tm/dontruntwice.
-
-tm/bestPerformance
-tm/dontruntwice
-
-* TODO Re-evaluate whether each function should be run just once
-
-These two were just added, but there is no check yet as to whether
-theyve been run before. I think they should run just once, but we should
-also then have a -force option to run despite having already been run.
-
-tm/bestPerformance
-tm/set-processorscheduling
-
 * TODO this isntaller should bail if write protect is on
 
 At the moment installer doesn't check
@@ -22,6 +5,27 @@ At the moment installer doesn't check
 * TODO don't use taskkill in settings.ps1
 
 Use something more PS'ish possibly job-control stuff?
+
+* DONE pu is working, but clean it up
+  CLOSED: [2016-08-08 Mon 19:50]
+
+I started don't-run-twice in =tm/bestPerformance= and then changed how I
+did it in tm/dontruntwice.
+
+tm/bestPerformance
+tm/dontruntwice
+
+* DONE Re-evaluate whether each function should be run just once
+  CLOSED: [2016-08-08 Mon 19:51]
+
+Its enough to delete registry key =HKCU:\Software\Streambox\win_settings=
+
+These two were just added, but there is no check yet as to whether
+theyve been run before. I think they should run just once, but we should
+also then have a -force option to run despite having already been run.
+
+tm/bestPerformance
+tm/set-processorscheduling
 
 * DONE Never tried uninsaller, make sure it works
   CLOSED: [2016-07-29 Fri 09:43]
